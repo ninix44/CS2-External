@@ -27,31 +27,29 @@ namespace CS2External.Functions
             {
                 try
                 {
-                    if (_memoryContext.LocalPlayerPawn == IntPtr.Zero)
+                    IntPtr localPlayerPawn = _memoryContext.LocalPlayerPawn;
+                    if (localPlayerPawn == IntPtr.Zero)
                     {
-                        Thread.Sleep(10);
+                        localPlayerPawn = _memoryAccess.ReadPointer(_memoryContext.Client, Offsets.dwLocalPlayerPawn);
+                        _memoryContext.InitializeLocalPlayerPawn(localPlayerPawn);
+                        Thread.Sleep(500);
                         continue;
                     }
-                    IntPtr cameraServices = _memoryAccess.ReadPointer(_memoryContext.LocalPlayerPawn, Offsets.m_pCameraServices);
+                    IntPtr cameraServices = _memoryAccess.ReadPointer(localPlayerPawn, Offsets.m_pCameraServices);
                     if (cameraServices == IntPtr.Zero)
                     {
                         Thread.Sleep(10);
                         continue;
                     }
-                    bool isScoped = _memoryAccess.ReadBool(_memoryContext.LocalPlayerPawn, Offsets.m_bIsScoped);
+                    bool isScoped = _memoryAccess.ReadBool(localPlayerPawn, Offsets.m_bIsScoped);
                     if (!isScoped)
                     {
-                        uint currentFov = _memoryAccess.ReadUInt(cameraServices, Offsets.m_iFOV);
-                        if (currentFov != (uint)_settings.Fov)
-                        {
-                            _memoryAccess.WriteUInt(cameraServices, Offsets.m_iFOV, (uint)_settings.Fov);
-                        }
+                        _memoryAccess.WriteUInt(cameraServices, Offsets.m_iFOV, (uint)_settings.Fov);
                     }
                     Thread.Sleep(1);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine($"FovChanger error: {ex.Message}");
                     Thread.Sleep(100);
                 }
             }

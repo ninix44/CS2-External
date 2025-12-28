@@ -27,21 +27,26 @@ namespace CS2External.Functions
             {
                 try
                 {
-                    if (!_settings.IsAntiFlashEnabled || _memoryContext.LocalPlayerPawn == IntPtr.Zero)
+                    if (!_settings.IsAntiFlashEnabled)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                         continue;
                     }
-                    float flashTime = _memoryAccess.ReadFloat(_memoryContext.LocalPlayerPawn, Offsets.m_flFlashBangTime);
+                    IntPtr localPlayerPawn = _memoryAccess.ReadPointer(_memoryContext.Client, Offsets.dwLocalPlayerPawn);
+                    if (localPlayerPawn == IntPtr.Zero)
+                    {
+                        Thread.Sleep(100);
+                        continue;
+                    }
+                    float flashTime = _memoryAccess.ReadFloat(localPlayerPawn, Offsets.m_flFlashDuration);
                     if (flashTime > 0)
                     {
-                        _memoryAccess.WriteFloat(_memoryContext.LocalPlayerPawn, Offsets.m_flFlashBangTime, 0);
+                        _memoryAccess.WriteFloat(localPlayerPawn, Offsets.m_flFlashDuration, 0);
                     }
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine($"AntiFlash error: {ex.Message}");
                     Thread.Sleep(100);
                 }
             }

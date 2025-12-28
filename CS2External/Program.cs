@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CS2External;
 using CS2External.Functions;
 using CS2External.Handlers;
@@ -15,14 +16,17 @@ public class Program
             IMemoryAccess memoryAccess = new SwedMemoryAccess("cs2");
             Console.WriteLine("Attached successfully.");
             IMemoryContext memoryContext = new MemoryContext(memoryAccess);
-            memoryContext.InitializeClient(memoryAccess.GetModuleBase("client.dll"));
+            IntPtr clientAddress = memoryAccess.GetModuleBase("client.dll");
+            memoryContext.InitializeClient(clientAddress);
             if (memoryContext.Client == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to get client module base.");
+                Console.ReadKey();
                 return;
             }
-            memoryContext.InitializeLocalPlayerPawn(memoryAccess.ReadPointer(memoryContext.Client + 0x1874040));
-            memoryContext.InitializeForceJump(memoryContext.Client + 0x186CD50);
+            Console.WriteLine($"Client.dll found at: 0x{clientAddress:X}");
+            memoryContext.InitializeLocalPlayerPawn(memoryAccess.ReadPointer(memoryContext.Client, Offsets.dwLocalPlayerPawn));
+            memoryContext.InitializeForceJump(memoryContext.Client + Offsets.dwForceJump);
             IGameSettings settings = new GameSettings();
             var functions = new List<IFunction>
             {
@@ -32,12 +36,14 @@ public class Program
             };
             IFunctionManager functionManager = new FunctionManager(functions);
             IOverlay overlay = new Overlay(settings);
-            overlay.Start().Wait();
+            
             functionManager.Execute();
+            overlay.Start().Wait();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.ReadKey();
         }
     }
 }

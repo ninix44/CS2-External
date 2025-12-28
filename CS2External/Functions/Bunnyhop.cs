@@ -15,9 +15,6 @@ namespace CS2External.Functions
         private readonly IMemoryContext _memoryContext;
         private readonly IGameSettings _settings;
 
-        private bool _lastJumpState = false;
-        private long _lastJumpTime = 0;
-
         public Bunnyhop(IMemoryAccess memoryAccess, IMemoryContext memoryContext, IGameSettings settings)
         {
             _memoryAccess = memoryAccess ?? throw new ArgumentNullException(nameof(memoryAccess));
@@ -31,45 +28,44 @@ namespace CS2External.Functions
             {
                 try
                 {
-                    if (!_settings.IsBunnyHopEnabled || _memoryContext.LocalPlayerPawn == IntPtr.Zero)
+                    if (!_settings.IsBunnyHopEnabled)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(130);
                         continue;
                     }
 
                     IntPtr localPlayerPawn = _memoryContext.LocalPlayerPawn;
                     if (localPlayerPawn == IntPtr.Zero)
                     {
-                        Thread.Sleep(10);
+                        localPlayerPawn = _memoryAccess.ReadPointer(_memoryContext.Client, Offsets.dwLocalPlayerPawn);
+                        _memoryContext.InitializeLocalPlayerPawn(localPlayerPawn);
+                        Thread.Sleep(130);
                         continue;
                     }
 
-                    uint flags = _memoryAccess.ReadUInt(localPlayerPawn + Offsets.m_fFlagsOffset);
+                    uint flags = _memoryAccess.ReadUInt(localPlayerPawn, Offsets.m_fFlags);
                     bool isOnGround = (flags & Offsets.FL_ONGROUND) != 0;
+                    bool isSpacePressed = (GetAsyncKeyState(Offsets.SPACE_BAR) & 0x8000) != 0;
 
-                    bool isSpacePressed = (GetAsyncKeyState(0x20) & 0x8000) != 0;
-
-                    long currentTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
-                    if (isSpacePressed && isOnGround && (currentTime - _lastJumpTime) > 50)
+                    if (isSpacePressed)
                     {
-                        if (!_lastJumpState)
+                        if (isOnGround)
                         {
-                            _memoryAccess.WriteUInt(_memoryContext.ForceJump, Offsets.IN_JUMP);
-                            _lastJumpTime = currentTime;
-                            _lastJumpState = true;
+                            _memoryAccess.WriteUInt(_memoryContext.ForceJump, Offsets.PLUS_JUMP);
+                            Thread.Sleep(8);
+                            _memoryAccess.WriteUInt(_memoryContext.ForceJump, Offsets.MINUS_JUMP);
                         }
-                    }
-                    else if (!isSpacePressed)
+                        else
                     {
-                        _lastJumpState = false;
+                            _memoryAccess.WriteUInt(_memoryContext.ForceJump, Offsets.MINUS_JUMP);
+                        }
                     }
 
                     Thread.Sleep(1);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine($"Bunnyhop error: {ex.Message}");
-                    Thread.Sleep(100);
+                    Thread.Sleep(130);
                 }
             }
         }
