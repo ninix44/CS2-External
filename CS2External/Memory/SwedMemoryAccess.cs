@@ -22,6 +22,11 @@ namespace CS2External.Memory
             return _swed.ReadPointer(address, offset);
         }
 
+        public IntPtr ReadPointer(IntPtr address)
+        {
+            return _swed.ReadPointer(address);
+        }
+
         public uint ReadUInt(IntPtr address, int offset)
         {
             return _swed.ReadUInt(address + offset);
@@ -30,6 +35,11 @@ namespace CS2External.Memory
         public void WriteUInt(IntPtr address, uint value)
         {
             _swed.WriteUInt(address, value);
+        }
+        
+        public void WriteUInt(IntPtr address, int offset, uint value)
+        {
+            _swed.WriteUInt(address + offset, value);
         }
 
         public float ReadFloat(IntPtr address, int offset)
@@ -47,19 +57,9 @@ namespace CS2External.Memory
             return _swed.ReadBool(address + offset);
         }
 
-        public IntPtr ReadPointer(IntPtr address)
-        {
-            return _swed.ReadPointer(address);
-        }
-
-        public void WriteUInt(IntPtr address, int offset, uint value)
-        {
-            _swed.WriteUInt(address + offset, value);
-        }
-
         public uint ReadUInt(nint v)
         {
-            return _swed.ReadUInt(v);
+            return _swed.ReadUInt((IntPtr)v);
         }
     }
 
@@ -67,13 +67,17 @@ namespace CS2External.Memory
     {
         IntPtr GetModuleBase(string moduleName);
         IntPtr ReadPointer(IntPtr address, int offset);
+        IntPtr ReadPointer(IntPtr address);
+        
         uint ReadUInt(IntPtr address, int offset);
+        uint ReadUInt(nint v); 
+
         void WriteUInt(IntPtr address, uint value);
+        void WriteUInt(IntPtr address, int offset, uint value);
+        
         float ReadFloat(IntPtr address, int offset);
         void WriteFloat(IntPtr address, int offset, float value);
+        
         bool ReadBool(IntPtr address, int offset);
-        IntPtr ReadPointer(IntPtr address);
-        void WriteUInt(IntPtr address, int offset, uint value);
-        uint ReadUInt(nint v);
     }
 }
