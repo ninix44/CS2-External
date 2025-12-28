@@ -49,6 +49,7 @@ public class Program
                 functions.Add(new Bunnyhop(memoryAccess, memoryContext, settings));
                 functions.Add(new AntiFlash(memoryAccess, memoryContext, settings));
                 functions.Add(new FovChanger(memoryAccess, memoryContext, settings));
+                functions.Add(new NoRecoil(memoryAccess, memoryContext, settings)); 
             }
             catch (Exception ex)
             {

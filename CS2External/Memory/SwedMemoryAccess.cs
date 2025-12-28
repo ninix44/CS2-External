@@ -1,5 +1,6 @@
 ﻿using Swed64;
 using System;
+using System.Numerics;
 
 namespace CS2External.Memory
 {
@@ -61,6 +62,32 @@ namespace CS2External.Memory
         {
             return _swed.ReadUInt((IntPtr)v);
         }
+
+        public Vector2 ReadVec2(IntPtr address, int offset)
+        {
+            float x = _swed.ReadFloat(address + offset);
+            float y = _swed.ReadFloat(address + offset + 4);
+            return new Vector2(x, y);
+        }
+
+        public void WriteVec2(IntPtr address, int offset, Vector2 value)
+        {
+            _swed.WriteFloat(address + offset, value.X);
+            _swed.WriteFloat(address + offset + 4, value.Y);
+        }
+        
+        public Vector2 ReadVec2(IntPtr address)
+        {
+            float x = _swed.ReadFloat(address);
+            float y = _swed.ReadFloat(address + 4);
+            return new Vector2(x, y);
+        }
+
+        public void WriteVec2(IntPtr address, Vector2 value)
+        {
+            _swed.WriteFloat(address, value.X);
+            _swed.WriteFloat(address + 4, value.Y);
+        }
     }
 
     public interface IMemoryAccess
@@ -79,5 +106,10 @@ namespace CS2External.Memory
         void WriteFloat(IntPtr address, int offset, float value);
         
         bool ReadBool(IntPtr address, int offset);
+
+        Vector2 ReadVec2(IntPtr address, int offset);
+        void WriteVec2(IntPtr address, int offset, Vector2 value);
+        Vector2 ReadVec2(IntPtr address);
+        void WriteVec2(IntPtr address, Vector2 value);
     }
 }

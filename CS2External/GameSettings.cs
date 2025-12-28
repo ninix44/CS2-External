@@ -16,6 +16,11 @@
         {
             get; set;
         } = 60;
+
+        public int RecoilControlAmount
+        {
+            get; set;
+        } = 0; 
     }
 
     public interface IGameSettings
@@ -31,6 +36,11 @@
         }
 
         int Fov
+        {
+            get; set;
+        }
+
+        int RecoilControlAmount
         {
             get; set;
         }

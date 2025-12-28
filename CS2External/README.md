@@ -11,6 +11,7 @@ A C# external cheat for Counter-Strike 2.
 - [x] AntiFlash
 - [x] FovChanger (Smooth transition & aggressive overwrite)
 - [ ] Bunnyhop (Timing fix later!!!)
+- [x] NoRecoil (later update!! Reduce screen shaking!) 
 
 ### Phase 2: Visuals (Next Step)
 - [ ] Entity List Reading (Loop through players)

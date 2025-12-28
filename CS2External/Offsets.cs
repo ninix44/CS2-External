@@ -10,10 +10,14 @@
 
         public const int m_fFlags = 0x3F8;
         public const int m_flFlashDuration = 0x1610;
-        public const int m_pCameraServices = 0x1428;
+        public const int m_pCameraServices = 0x1428; 
         public const int m_iFOV = 0x288;
         public const int m_bIsScoped = 0x2718;
         
+        public const int m_aimPunchAngle = 0x16E4; 
+        public const int m_iShotsFired = 0x272C; 
+        public const int m_vecCsViewPunchAngle = 0x40; 
+
         public const int FL_ONGROUND = 1 << 0; 
         public const int SPACE_BAR = 0x20;
         

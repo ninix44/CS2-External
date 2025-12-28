@@ -22,13 +22,13 @@ namespace CS2External
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
-        private const int GWL_STYLE = -16;
-        private const int GWL_EXSTYLE = -20;
-        private const int WS_POPUP = unchecked((int)0x80000000);
-        private const int WS_VISIBLE = 0x10000000;
-        private const int WS_EX_TOPMOST = 0x00000008;
-        private const int WS_EX_LAYERED = 0x00080000;
-        private const int WS_EX_TRANSPARENT = 0x00000020;
+        // private const int GWL_STYLE = -16;
+        // private const int GWL_EXSTYLE = -20;
+        // private const int WS_POPUP = unchecked((int)0x80000000);
+        // private const int WS_VISIBLE = 0x10000000;
+        // private const int WS_EX_TOPMOST = 0x00000008;
+        // private const int WS_EX_LAYERED = 0x00080000;
+        // private const int WS_EX_TRANSPARENT = 0x00000020;
         private const uint SWP_NOZORDER = 0x0004;
         private const uint SWP_SHOWWINDOW = 0x0040;
 
@@ -52,7 +52,7 @@ namespace CS2External
                 }
                 
                 ImGui.SetNextWindowPos(new Vector2(100, 100));
-                ImGui.SetNextWindowSize(new Vector2(400, 350));
+                ImGui.SetNextWindowSize(new Vector2(400, 450));
                 
                 _isInitialized = true;
             }
@@ -78,6 +78,20 @@ namespace CS2External
                 int fov = _settings.Fov;
                 ImGui.Text("FOV Changer");
                 if (ImGui.SliderInt("##fov", ref fov, 58, 140)) _settings.Fov = fov;
+
+                ImGui.Separator();
+                ImGui.Text("No Recoil (RCS + NoVis)");
+                
+                int rcsAmount = _settings.RecoilControlAmount;
+                if (ImGui.RadioButton("Off", rcsAmount == 0)) _settings.RecoilControlAmount = 0;
+                ImGui.SameLine();
+                if (ImGui.RadioButton("25%", rcsAmount == 25)) _settings.RecoilControlAmount = 25;
+                ImGui.SameLine();
+                if (ImGui.RadioButton("50%", rcsAmount == 50)) _settings.RecoilControlAmount = 50;
+                ImGui.SameLine();
+                if (ImGui.RadioButton("75%", rcsAmount == 75)) _settings.RecoilControlAmount = 75;
+                ImGui.SameLine();
+                if (ImGui.RadioButton("100%", rcsAmount == 100)) _settings.RecoilControlAmount = 100;
 
                 ImGui.End();
             }
