@@ -1,0 +1,11 @@
+﻿bin/
+obj/
+
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+*.log
+Thumbs.db
